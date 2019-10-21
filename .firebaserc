@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "holdex-auth"
+    "stage": "holdex-auth-stage",
+    "prod": "holdex-auth-production"
   }
 }

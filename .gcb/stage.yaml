@@ -19,34 +19,13 @@ steps:
 
   - id: "download-cached-node_modules"
     name: "gcr.io/cloud-builders/gsutil"
-    args:
-      [
-        "cp",
-        "gs://${PROJECT_ID}_cloudbuild/auth/node_modules.tar.gz",
-        ".",
-      ]
+    args: ["cp", "gs://${PROJECT_ID}_cloudbuild/auth/node_modules.tar.gz", "."]
 
   - id: "unzip-cached-node_modules"
     name: "alpine"
     args: ["tar", "-xjf", "node_modules.tar.gz"]
 
   - id: "download-missing-node_modules"
-    name: "gcr.io/cloud-builders/npm"
-
-  - id: "zip-node_modules"
-    name: "alpine"
-    args: ["tar", "-cjf", "node_modules.tar.gz", "node_modules"]
-
-  - id: "cache-new-node_modules"
-    name: "gcr.io/cloud-builders/gsutil"
-    args:
-      [
-        "cp",
-        "node_modules.tar.gz",
-        "gs://${PROJECT_ID}_cloudbuild/auth",
-      ]
-
-  - id: "install-project-dependencies"
     name: "gcr.io/cloud-builders/npm"
     args: ["install"]
 
@@ -55,6 +34,23 @@ steps:
     dir: "functions"
     args: ["install"]
 
-  - id: "run tests"
+  - id: "zip-node_modules"
+    name: "alpine"
+    args: ["tar", "-cjf", "node_modules.tar.gz", "node_modules"]
+
+  - id: "cache-new-node_modules"
+    name: "gcr.io/cloud-builders/gsutil"
+    args: ["cp", "node_modules.tar.gz", "gs://${PROJECT_ID}_cloudbuild/auth"]
+
+  - id: "build-app"
     name: "gcr.io/cloud-builders/npm"
-    args: ["run", "test"]
+    args: ["run", "build"]
+
+  - id: "deploy-to-staging"
+    name: "gcr.io/$PROJECT_ID/firebase"
+    args: ["deploy", "--only", "hosting:stage"]
+
+secrets:
+  - kmsKeyName: "projects/holdex-platform-stage/locations/global/keyRings/ci-key-ring/cryptoKeys/firebase-token"
+    secretEnv:
+      FIREBASE_TOKEN: "CiQAPXE5CnwmwVLZWi0OMEbWnF73MsnnsN0wHUXP9jYtXtrHxAsSVgC0Ka59yhJIM3KLgGv4TIfaM64iN8Pe8t2hyys0xtpDqm8GjoF2XlX8edINq69WI/wiOcSxML6tDJXEvCT/x5rXwFq8+DU31Gf6HN1BCZFVqEISxxnV"

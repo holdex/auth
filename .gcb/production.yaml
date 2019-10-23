@@ -31,7 +31,13 @@ steps:
     args: ["tar", "-xjf", "node_modules.tar.gz"]
 
   - id: "download-missing-node_modules"
-    name: "gcr.io/cloud-builders/yarn"
+    name: "gcr.io/cloud-builders/npm"
+    args: ["install"]
+
+  - id: "install-function-dependencies"
+    name: "gcr.io/cloud-builders/npm"
+    dir: "functions"
+    args: ["install"]
 
   - id: "zip-node_modules"
     name: "alpine"
@@ -45,3 +51,21 @@ steps:
         "node_modules.tar.gz",
         "gs://${PROJECT_ID}_cloudbuild/auth",
       ]
+
+  - id: "cache-new-node_modules"
+    name: "gcr.io/cloud-builders/gsutil"
+    args: ["cp", "node_modules.tar.gz", "gs://${PROJECT_ID}_cloudbuild/auth"]
+
+  - id: "build-app"
+    name: "gcr.io/cloud-builders/npm"
+    args: ["run", "build"]
+
+  - id: "deploy-to-production"
+    name: "gcr.io/$PROJECT_ID/firebase"
+    args: ["deploy", "--only", "hosting:production"]
+
+secrets:
+  - kmsKeyName: "projects/holdex-platform-stage/locations/global/keyRings/ci-key-ring/cryptoKeys/firebase-token"
+    secretEnv:
+      FIREBASE_TOKEN: "CiQAPXE5CnwmwVLZWi0OMEbWnF73MsnnsN0wHUXP9jYtXtrHxAsSVgC0Ka59yhJIM3KLgGv4TIfaM64iN8Pe8t2hyys0xtpDqm8GjoF2XlX8edINq69WI/wiOcSxML6tDJXEvCT/x5rXwFq8+DU31Gf6HN1BCZFVqEISxxnV"
+

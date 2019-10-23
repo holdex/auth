@@ -1,6 +1,17 @@
 {
   "projects": {
-    "stage": "holdex-auth-stage",
-    "prod": "holdex-auth-production"
+    "default": "holdex-auth"
+  },
+  "targets": {
+    "holdex-auth": {
+      "hosting": {
+        "production": [
+          "holdex-auth"
+        ],
+        "stage": [
+          "stage-holdex-auth"
+        ]
+      }
+    }
   }
 }

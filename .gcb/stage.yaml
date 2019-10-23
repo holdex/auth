@@ -49,6 +49,7 @@ steps:
   - id: "deploy-to-staging"
     name: "gcr.io/$PROJECT_ID/firebase"
     args: ["deploy", "--only", "hosting:stage"]
+    secretEnv: ["FIREBASE_TOKEN"]
 
 secrets:
   - kmsKeyName: "projects/holdex-platform-stage/locations/global/keyRings/ci-key-ring/cryptoKeys/firebase-token"

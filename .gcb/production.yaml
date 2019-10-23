@@ -19,12 +19,7 @@ steps:
 
   - id: "download-cached-node_modules"
     name: "gcr.io/cloud-builders/gsutil"
-    args:
-      [
-        "cp",
-        "gs://${PROJECT_ID}_cloudbuild/auth/node_modules.tar.gz",
-        ".",
-      ]
+    args: ["cp", "gs://${PROJECT_ID}_cloudbuild/auth/node_modules.tar.gz", "."]
 
   - id: "unzip-cached-node_modules"
     name: "alpine"
@@ -45,15 +40,6 @@ steps:
 
   - id: "cache-new-node_modules"
     name: "gcr.io/cloud-builders/gsutil"
-    args:
-      [
-        "cp",
-        "node_modules.tar.gz",
-        "gs://${PROJECT_ID}_cloudbuild/auth",
-      ]
-
-  - id: "cache-new-node_modules"
-    name: "gcr.io/cloud-builders/gsutil"
     args: ["cp", "node_modules.tar.gz", "gs://${PROJECT_ID}_cloudbuild/auth"]
 
   - id: "build-app"
@@ -63,9 +49,9 @@ steps:
   - id: "deploy-to-production"
     name: "gcr.io/$PROJECT_ID/firebase"
     args: ["deploy", "--only", "hosting:production"]
+    secretEnv: ["FIREBASE_TOKEN"]
 
 secrets:
   - kmsKeyName: "projects/holdex-platform-stage/locations/global/keyRings/ci-key-ring/cryptoKeys/firebase-token"
     secretEnv:
       FIREBASE_TOKEN: "CiQAPXE5CnwmwVLZWi0OMEbWnF73MsnnsN0wHUXP9jYtXtrHxAsSVgC0Ka59yhJIM3KLgGv4TIfaM64iN8Pe8t2hyys0xtpDqm8GjoF2XlX8edINq69WI/wiOcSxML6tDJXEvCT/x5rXwFq8+DU31Gf6HN1BCZFVqEISxxnV"
-

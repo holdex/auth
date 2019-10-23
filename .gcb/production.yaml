@@ -1,0 +1,47 @@
+steps:
+  - id: "create-temp-cache #1"
+    name: "alpine"
+    args: ["mkdir", "-p", "tmp"]
+
+  - id: "create-temp-cache #2"
+    name: "alpine"
+    args: ["tar", "-cjf", "node_modules.tar.gz", "tmp"]
+
+  - id: "create-temp-cache #3"
+    name: "gcr.io/cloud-builders/gsutil"
+    args:
+      [
+        "cp",
+        "-n",
+        "node_modules.tar.gz",
+        "gs://${PROJECT_ID}_cloudbuild/auth/node_modules.tar.gz",
+      ]
+
+  - id: "download-cached-node_modules"
+    name: "gcr.io/cloud-builders/gsutil"
+    args:
+      [
+        "cp",
+        "gs://${PROJECT_ID}_cloudbuild/auth/node_modules.tar.gz",
+        ".",
+      ]
+
+  - id: "unzip-cached-node_modules"
+    name: "alpine"
+    args: ["tar", "-xjf", "node_modules.tar.gz"]
+
+  - id: "download-missing-node_modules"
+    name: "gcr.io/cloud-builders/yarn"
+
+  - id: "zip-node_modules"
+    name: "alpine"
+    args: ["tar", "-cjf", "node_modules.tar.gz", "node_modules"]
+
+  - id: "cache-new-node_modules"
+    name: "gcr.io/cloud-builders/gsutil"
+    args:
+      [
+        "cp",
+        "node_modules.tar.gz",
+        "gs://${PROJECT_ID}_cloudbuild/auth",
+      ]

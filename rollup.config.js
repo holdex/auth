@@ -1,3 +1,5 @@
+/* eslint-disable no-shadow */
+/* eslint-disable import/extensions */
 /* eslint-disable global-require */
 import resolve from "rollup-plugin-node-resolve";
 import replace from "rollup-plugin-replace";
@@ -93,22 +95,6 @@ export default {
       require("module").builtinModules ||
         Object.keys(process.binding("natives"))
     ),
-
-    onwarn
-  },
-
-  serviceworker: {
-    input: config.serviceworker.input(),
-    output: config.serviceworker.output(),
-    plugins: [
-      resolve(),
-      replace({
-        "process.browser": true,
-        "process.env.NODE_ENV": JSON.stringify(mode)
-      }),
-      commonjs(),
-      !dev && terser()
-    ],
 
     onwarn
   }

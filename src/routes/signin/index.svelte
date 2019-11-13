@@ -29,8 +29,12 @@
   <h5>[Holdex Logo]</h5>
 
   <div class="form-container">
-    <h5>Sign in</h5>
-    <p>Please enter your email</p>
+    <h5>
+      Sign in
+      <br />
+      <small>Please enter your email</small>
+    </h5>
+
     <form>
       <label for="email">Email</label>
       <input

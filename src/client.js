@@ -1,5 +1,6 @@
-import * as sapper from '@sapper/app';
+/* eslint-disable import/no-extraneous-dependencies */
+import * as sapper from "@sapper/app";
 
 sapper.start({
-	target: document.querySelector('#sapper')
+  target: document.querySelector("#sapper")
 });

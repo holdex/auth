@@ -1,3 +1,12 @@
+<script context="module">
+  import { buildOAuthFlowURL } from "../helpers";
+
+  export async function preload(_page, _session) {
+    const oAuthFlowURL = buildOAuthFlowURL();
+    return this.redirect(302, oAuthFlowURL);
+  }
+</script>
+
 <style>
   h1,
   figure,
